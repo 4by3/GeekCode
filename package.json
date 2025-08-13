@@ -1,0 +1,24 @@
+{
+  "name": "jeetcode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/4by3/JeetCode.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/4by3/JeetCode/issues"
+  },
+  "homepage": "https://github.com/4by3/JeetCode#readme",
+  "dependencies": {
+    "discord.js": "^14.21.0",
+    "dotenv": "^17.2.1"
+  }
+}
