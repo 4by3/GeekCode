@@ -20,6 +20,7 @@
   "homepage": "https://github.com/4by3/JeetCode#readme",
   "dependencies": {
     "discord.js": "^14.21.0",
-    "dotenv": "^17.2.1"
+    "dotenv": "^17.2.1",
+    "node-schedule": "^2.1.1"
   }
 }

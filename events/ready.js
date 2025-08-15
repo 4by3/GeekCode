@@ -1,0 +1,11 @@
+const { Events } = require('discord.js');
+const { setupSchedules } = require('../utils/scheduleManager');
+
+module.exports = {
+    name: Events.ClientReady,
+    once: true,
+    execute(client, dailyMessageRef, clickedUsers) {
+        console.log(`Logged in as ${client.user.tag}!`);
+        setupSchedules(client, dailyMessageRef, clickedUsers);
+    },
+};
