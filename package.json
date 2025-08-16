@@ -1,5 +1,5 @@
 {
-  "name": "jeetcode",
+  "name": "geekcode",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/4by3/JeetCode.git"
+    "url": "git+https://github.com/4by3/GeekCode.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/4by3/JeetCode/issues"
+    "url": "https://github.com/4by3/GeekCode/issues"
   },
-  "homepage": "https://github.com/4by3/JeetCode#readme",
+  "homepage": "https://github.com/4by3/GeekCode#readme",
   "dependencies": {
     "discord.js": "^14.21.0",
     "dotenv": "^17.2.1",
