@@ -24,7 +24,7 @@ function saveScores() {
 }
 
 // Update scores for users who didn't click
-function updateScoresForNonClickers(clickedUsers, clientId) {
+function deductPoint(clickedUsers, clientId) {
     for (const userId in scores) {
         if (!clickedUsers.has(userId) && userId !== clientId) {
             scores[userId] = Math.max(-7, (scores[userId] || 0) - 1);
@@ -43,6 +43,6 @@ function addPoint(userId) {
 module.exports = {
     scores,
     saveScores,
-    updateScoresForNonClickers,
+    deductPoint,
     addPoint,
 };

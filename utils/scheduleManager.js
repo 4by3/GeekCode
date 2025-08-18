@@ -6,16 +6,16 @@ const { CHANNEL_ID } = require('../config/env');
 function setupSchedules(client, dailyMessageRef, clickedUsers) {
     // Creation of button
     const rule = new schedule.RecurrenceRule();
-    rule.hour = 12;
-    rule.minute = 35;
-    rule.second = 10;
+    rule.hour = 6;
+    rule.minute = 59;
+    rule.second = 0;
     rule.tz = 'Australia/Sydney';
 
     // Removal of button
     const disableRule = new schedule.RecurrenceRule();
-    disableRule.hour = 12;
-    disableRule.minute = 35;
-    disableRule.second = 15;
+    disableRule.hour = 6;
+    disableRule.minute = 59;
+    disableRule.second = 30;
     disableRule.tz = 'Australia/Sydney';
 
     // Send button schedule

@@ -4,6 +4,7 @@ const { addPoint } = require('../utils/scoreManager');
 module.exports = {
     name: Events.InteractionCreate,
     async execute(interaction, dailyMessageRef, clickedUsers) {
+        // fix later
         if (interaction.isChatInputCommand()) {
             const command = interaction.client.commands.get(interaction.commandName);
 
