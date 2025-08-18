@@ -1,17 +1,12 @@
 const { SlashCommandBuilder } = require('discord.js');
-const fs = require('node:fs');
-const path = require('node:path');
+const ScoreManager = require('../../utils/scoreManager');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('leaderboard')
         .setDescription('Shows the current point leaderboard'),
     async execute(interaction) {
-        const scoresPath = path.join(__dirname, '../../scores.json');
-        let scores = {};
-        if (fs.existsSync(scoresPath)) {
-            scores = JSON.parse(fs.readFileSync(scoresPath));
-        }
+        const scores = ScoreManager.getScores();
 
         const sortedScores = Object.entries(scores)
             .sort(([,a], [,b]) => b - a)

@@ -5,44 +5,57 @@ const scoresPath = path.join(__dirname, '../scores.json');
 let scores = {};
 
 // Load scores from file or initialize empty object
-if (fs.existsSync(scoresPath)) {
-    try {
-        const data = fs.readFileSync(scoresPath, 'utf8');
-        if (data.trim()) {
-            scores = JSON.parse(data);
+function loadScores() {
+    if (fs.existsSync(scoresPath)) {
+        try {
+            const data = fs.readFileSync(scoresPath, 'utf8');
+            if (data.trim()) {
+                scores = JSON.parse(data);
+            }
+        } catch (error) {
+            console.error('Error parsing scores.json, initializing empty scores:', error.message);
+            scores = {};
+            fs.writeFileSync(scoresPath, JSON.stringify(scores, null, 2));
         }
-    } catch (error) {
-        console.error('Error parsing scores.json, initializing empty scores:', error.message);
-        scores = {};
-        fs.writeFileSync(scoresPath, JSON.stringify(scores, null, 2));
     }
 }
+
+loadScores();
 
 // Save scores to file
 function saveScores() {
     fs.writeFileSync(scoresPath, JSON.stringify(scores, null, 2));
 }
 
+// Add point for a user
+function addPoint(userId) {
+    newScore = Math.min(7, (scores[userId] || 0) + 1);
+    scores[userId] = newScore
+    console.log(`Point added for user ${userId}. New score: ${newScore}`);
+    saveScores();
+    return scores[userId];
+}
+
 // Update scores for users who didn't click
-function deductPoint(clickedUsers, clientId) {
+function deductPoints(clickedUsers) {
     for (const userId in scores) {
-        if (!clickedUsers.has(userId) && userId !== clientId) {
-            scores[userId] = Math.max(-7, (scores[userId] || 0) - 1);
+        if (!clickedUsers.has(userId)) {
+            newScore = Math.max(-7, (scores[userId] || 0) - 1);
+            scores[userId] = newScore;
+            console.log(`Point deducted from user ${userId}. New score: ${newScore}`);
         }
     }
     saveScores();
 }
 
-// Add point for a user
-function addPoint(userId) {
-    scores[userId] = Math.min(7, (scores[userId] || 0) + 1);
-    saveScores();
-    return scores[userId];
+
+function getScores() {
+    return { ...scores };
 }
 
 module.exports = {
-    scores,
+    getScores,
     saveScores,
-    deductPoint,
+    deductPoints,
     addPoint,
 };

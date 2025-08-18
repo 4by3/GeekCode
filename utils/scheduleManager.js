@@ -1,28 +1,25 @@
 const schedule = require('node-schedule');
 const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { updateScoresForNonClickers } = require('./scoreManager');
 const { CHANNEL_ID } = require('../config/env');
+const { deductPoints } = require('../utils/scoreManager');
 
 function setupSchedules(client, dailyMessageRef, clickedUsers) {
     // Creation of button
     const rule = new schedule.RecurrenceRule();
-    rule.hour = 6;
-    rule.minute = 59;
-    rule.second = 0;
+    rule.hour = 8;
+    rule.minute = 22;
+    rule.second = 20;
     rule.tz = 'Australia/Sydney';
 
     // Removal of button
     const disableRule = new schedule.RecurrenceRule();
-    disableRule.hour = 6;
-    disableRule.minute = 59;
+    disableRule.hour = 8;
+    disableRule.minute = 22;
     disableRule.second = 30;
     disableRule.tz = 'Australia/Sydney';
 
     // Send button schedule
     schedule.scheduleJob(rule, async () => {
-        // Update scores for previous day's non-clickers
-        updateScoresForNonClickers(clickedUsers, client.user.id);
-
         // Reset clicked users
         clickedUsers.clear();
 
@@ -62,6 +59,8 @@ function setupSchedules(client, dailyMessageRef, clickedUsers) {
                     .setDisabled(true);
                 const row = new ActionRowBuilder().addComponents(button);
                 await dailyMessageRef.message.edit({ components: [row] });
+                // deduct points
+                deductPoints(clickedUsers);
             } catch (error) {
                 console.error('Error disabling button:', error);
             }
