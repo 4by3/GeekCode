@@ -29,7 +29,7 @@ module.exports = {
                     }
                     clickedUsers.add(interaction.user.id);
                     addPoint(interaction.user.id);
-                    await interaction.reply({ content: `${interaction.user.username} has locked in!` });
+                    await interaction.reply({ content: `<@${interaction.user.id}> has locked in!` });
                 } catch (error) {
                     console.error('Error handling button interaction:', error);
                     await interaction.reply({ content: 'There was an error processing your click!', ephemeral: true });

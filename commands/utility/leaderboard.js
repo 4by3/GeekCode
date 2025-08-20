@@ -12,8 +12,23 @@ module.exports = {
             .sort(([,a], [,b]) => b - a)
             .slice(0, 10);
 
-        const leaderboard = sortedScores.map(([userId, score], index) => 
-            `${index + 1}. <@${userId}>: ${score} points`
+        const leaderboard = sortedScores.map(([userId, score], index) => {
+            let rank;
+            if (score >= 5) {
+                rank = 'Locked In';
+            } else if (score >= 3) {
+                rank = 'Grinding';
+            } else if (score >= 1) {
+                rank = 'Coding';
+            } else if (score >= -1) {
+                rank = 'Sleeping';
+            } else if (score >= -3) {
+                rank = 'Slacking';
+            } else {
+                rank = 'Geeked';
+            }
+            return `${index + 1}. <@${userId}> ${score} points: **${rank}**`
+        }
         ).join('\n');
 
         await interaction.reply({

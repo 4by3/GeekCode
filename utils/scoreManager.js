@@ -29,7 +29,7 @@ function saveScores() {
 
 // Add point for a user
 function addPoint(userId) {
-    newScore = Math.min(7, (scores[userId] || 0) + 1);
+    newScore = Math.max(1, Math.min(5, (scores[userId] || 0) + 1));
     scores[userId] = newScore
     console.log(`Point added for user ${userId}. New score: ${newScore}`);
     saveScores();
@@ -40,7 +40,7 @@ function addPoint(userId) {
 function deductPoints(clickedUsers) {
     for (const userId in scores) {
         if (!clickedUsers.has(userId)) {
-            newScore = Math.max(-7, (scores[userId] || 0) - 1);
+            newScore = (scores[userId] || 0) - 1;
             scores[userId] = newScore;
             console.log(`Point deducted from user ${userId}. New score: ${newScore}`);
         }

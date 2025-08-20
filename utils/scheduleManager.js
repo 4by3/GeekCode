@@ -6,15 +6,15 @@ const { deductPoints } = require('../utils/scoreManager');
 function setupSchedules(client, dailyMessageRef, clickedUsers) {
     // Creation of button
     const rule = new schedule.RecurrenceRule();
-    rule.hour = 8;
-    rule.minute = 22;
-    rule.second = 20;
+    rule.hour = 9;
+    rule.minute = 44;
+    rule.second = 10;
     rule.tz = 'Australia/Sydney';
 
     // Removal of button
     const disableRule = new schedule.RecurrenceRule();
-    disableRule.hour = 8;
-    disableRule.minute = 22;
+    disableRule.hour = 9;
+    disableRule.minute = 44;
     disableRule.second = 30;
     disableRule.tz = 'Australia/Sydney';
 
