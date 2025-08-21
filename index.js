@@ -4,13 +4,17 @@ const path = require('node:path');
 const { DISCORD_TOKEN } = require('./config/env');
 
 // Webserver config for Render
-const express = require('express');
-const app = express();
+const express = require('express')
+const app = express()
+const port = process.env.PORT || 4000 
 
-app.get('/', (req, res) => res.send('Discord bot is running!'));
-app.listen(8080, '0.0.0.0', () => {
-  console.log(`HTTP server running`);
-});
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
 
 
 const client = new Client({
