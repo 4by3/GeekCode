@@ -1,4 +1,4 @@
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const ScoreManager = require('../../utils/scoreManager');
 
 module.exports = {
@@ -6,10 +6,9 @@ module.exports = {
         .setName('leaderboard')
         .setDescription('Shows the current point leaderboard'),
     async execute(interaction) {
-        const scores = ScoreManager.getScores();
-
+        const scores = await ScoreManager.getScores();
         const sortedScores = Object.entries(scores)
-            .sort(([,a], [,b]) => b - a)
+            .sort(([, a], [, b]) => b - a)
             .slice(0, 10);
 
         const leaderboard = sortedScores.map(([userId, score], index) => {
@@ -31,8 +30,15 @@ module.exports = {
         }
         ).join('\n');
 
+        const embed = new EmbedBuilder()
+            .setTitle('🏆 Server Leaderboard')
+            .setDescription(leaderboard || 'No scores yet!')
+            .setColor('#f28f0c')
+            .setTimestamp();
+
         await interaction.reply({
-            content: leaderboard || 'No scores yet!'
+            embeds: [embed],
+            allowedMentions: { parse: [] },
         });
     },
 };

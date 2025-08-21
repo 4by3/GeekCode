@@ -6,16 +6,16 @@ const { deductPoints } = require('../utils/scoreManager');
 function setupSchedules(client, dailyMessageRef, clickedUsers) {
     // Creation of button
     const rule = new schedule.RecurrenceRule();
-    rule.hour = 9;
-    rule.minute = 44;
-    rule.second = 10;
+    rule.hour = 6;
+    rule.minute = 0;
+    rule.second = 0;
     rule.tz = 'Australia/Sydney';
 
     // Removal of button
     const disableRule = new schedule.RecurrenceRule();
-    disableRule.hour = 9;
-    disableRule.minute = 44;
-    disableRule.second = 30;
+    disableRule.hour = 7;
+    disableRule.minute = 30;
+    disableRule.second = 0;
     disableRule.tz = 'Australia/Sydney';
 
     // Send button schedule
@@ -37,7 +37,7 @@ function setupSchedules(client, dailyMessageRef, clickedUsers) {
                 const row = new ActionRowBuilder().addComponents(button);
 
                 dailyMessageRef.message = await channel.send({
-                    content: 'app lock in!',
+                    content: 'Wake up! Click below before 7:30 to lock in',
                     components: [row],
                 });
             } catch (error) {

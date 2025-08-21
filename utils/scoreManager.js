@@ -1,61 +1,88 @@
-const fs = require('node:fs');
-const path = require('node:path');
+const { MongoClient } = require('mongodb');
+const client = new MongoClient(process.env.MONGODB_URI);
 
-const scoresPath = path.join(__dirname, '../scores.json');
-let scores = {};
+let db, scoresCollection;
 
-// Load scores from file or initialize empty object
-function loadScores() {
-    if (fs.existsSync(scoresPath)) {
-        try {
-            const data = fs.readFileSync(scoresPath, 'utf8');
-            if (data.trim()) {
-                scores = JSON.parse(data);
-            }
-        } catch (error) {
-            console.error('Error parsing scores.json, initializing empty scores:', error.message);
-            scores = {};
-            fs.writeFileSync(scoresPath, JSON.stringify(scores, null, 2));
-        }
+// Initialize MongoDB connection
+async function initializeMongoDB() {
+    try {
+        await client.connect();
+        db = client.db('discord_bot');
+        scoresCollection = db.collection('scores');
+        console.log('Connected to MongoDB');
+    } catch (error) {
+        console.error('Error connecting to MongoDB:', error.message);
+        process.exit(1);
     }
 }
 
-loadScores();
+initializeMongoDB();
 
-// Save scores to file
-function saveScores() {
-    fs.writeFileSync(scoresPath, JSON.stringify(scores, null, 2));
-}
 
 // Add point for a user
-function addPoint(userId) {
-    newScore = Math.max(1, Math.min(5, (scores[userId] || 0) + 1));
-    scores[userId] = newScore
-    console.log(`Point added for user ${userId}. New score: ${newScore}`);
-    saveScores();
-    return scores[userId];
+async function addPoint(userId) {
+    try {
+        // Find the user's current score
+        const user = await scoresCollection.findOne({ userId });
+        const currentScore = user ? user.score : 0;
+        const newScore = Math.max(1, Math.min(5, currentScore + 1));
+
+        // Update or insert the user's score
+        await scoresCollection.updateOne(
+            { userId },
+            { $set: { score: newScore } },
+            { upsert: true }
+        );
+
+        console.log(`Point added for user ${userId}. New score: ${newScore}`);
+        return newScore;
+    } catch (error) {
+        console.error(`Error adding point for user ${userId}:`, error.message);
+        throw error;
+    }
 }
 
 // Update scores for users who didn't click
-function deductPoints(clickedUsers) {
-    for (const userId in scores) {
-        if (!clickedUsers.has(userId)) {
-            newScore = (scores[userId] || 0) - 1;
-            scores[userId] = newScore;
-            console.log(`Point deducted from user ${userId}. New score: ${newScore}`);
+async function deductPoints(clickedUsers) {
+    try {
+        // Get all users in the collection
+        const users = await scoresCollection.find({}).toArray();
+
+        for (const user of users) {
+            const userId = user.userId;
+            if (!clickedUsers.has(userId)) {
+                const newScore = (scores[userId] || 0) - 1;
+                await scoresCollection.updateOne(
+                    { userId },
+                    { $set: { score: newScore } }
+                );
+                console.log(`Point deducted from user ${userId}. New score: ${newScore}`);
+            }
         }
+    } catch (error) {
+        console.error('Error deducting points:', error.message);
+        throw error;
     }
-    saveScores();
 }
 
 
-function getScores() {
-    return { ...scores };
+// Get function
+async function getScores() {
+    try {
+        const users = await scoresCollection.find({}).toArray();
+        const scores = {};
+        users.forEach(user => {
+            scores[user.userId] = user.score;
+        });
+        return scores;
+    } catch (error) {
+        console.error('Error fetching scores:', error.message);
+        throw error;
+    }
 }
 
 module.exports = {
     getScores,
-    saveScores,
     deductPoints,
     addPoint,
 };
