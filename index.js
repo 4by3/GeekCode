@@ -3,6 +3,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { DISCORD_TOKEN } = require('./config/env');
 
+// Webserver config for Render
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => res.send('Discord bot is running!'));
+app.listen(8080, '0.0.0.0', () => {
+  console.log(`HTTP server running`);
+});
+
+
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
