@@ -5,7 +5,12 @@ module.exports = {
     name: Events.ClientReady,
     once: true,
     execute(client, dailyMessageRef, clickedUsers) {
-        console.log(`Logged in as ${client.user.tag}!`);
-        setupSchedules(client, dailyMessageRef, clickedUsers);
+        try {
+            console.log(`Logged in as ${client.user.tag}!`);
+            setupSchedules(client, dailyMessageRef, clickedUsers);
+        }
+        catch (error) {
+            console.error('Failed to setup schedule', error);
+        }
     },
 };

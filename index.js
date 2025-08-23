@@ -1,19 +1,17 @@
 const { Client, Collection, GatewayIntentBits } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
-const { DISCORD_TOKEN } = require('./config/env');
+const { DISCORD_TOKEN, PORT } = require('./config/env');
 
-// Webserver config for Render
+// // Webserver config for Render
 const express = require('express')
 const app = express()
-const port = process.env.PORT || 4000 
-
+const port = PORT || 4000 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
-
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`GeekCode listening on port ${port}`)
 })
 
 
@@ -22,6 +20,7 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildVoiceStates,
     ],
 });
 
@@ -46,9 +45,9 @@ for (const folder of commandFolders) {
     }
 }
 
-// Shared state for daily message and clicked users
+// Shared state for daily message and locked-in users
 const dailyMessageRef = { message: null };
-const clickedUsers = new Set();
+const lockedInUsers = new Set();
 
 // Load event handlers
 const eventsPath = path.join(__dirname, 'events');
@@ -56,11 +55,15 @@ const eventFiles = fs.readdirSync(eventsPath).filter(file => file.endsWith('.js'
 
 for (const file of eventFiles) {
     const filePath = path.join(eventsPath, file);
-    const event = require(filePath);
-    if (event.once) {
-        client.once(event.name, (...args) => event.execute(...args, dailyMessageRef, clickedUsers));
-    } else {
-        client.on(event.name, (...args) => event.execute(...args, dailyMessageRef, clickedUsers));
+    const eventModule = require(filePath);
+
+    // Handle default export (e.g., InteractionCreate)
+    if (eventModule.name && eventModule.execute) {
+        if (eventModule.once) {
+            client.once(eventModule.name, (...args) => eventModule.execute(...args, dailyMessageRef, lockedInUsers));
+        } else {
+            client.on(eventModule.name, (...args) => eventModule.execute(...args, dailyMessageRef, lockedInUsers));
+        }
     }
 }
 

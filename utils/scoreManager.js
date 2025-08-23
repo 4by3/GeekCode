@@ -1,5 +1,6 @@
 const { MongoClient } = require('mongodb');
-const client = new MongoClient(process.env.MONGODB_URI);
+const { MONGODB_URI } = require('../config/env');
+const client = new MongoClient(MONGODB_URI);
 
 let db, scoresCollection;
 
@@ -51,7 +52,7 @@ async function deductPoints(clickedUsers) {
         for (const user of users) {
             const userId = user.userId;
             if (!clickedUsers.has(userId)) {
-                const newScore = (scores[userId] || 0) - 1;
+                const newScore = (user.score || 0) - 1;
                 await scoresCollection.updateOne(
                     { userId },
                     { $set: { score: newScore } }

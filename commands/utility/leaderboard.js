@@ -32,7 +32,7 @@ module.exports = {
             ).join('\n');
 
             const embed = new EmbedBuilder()
-                .setTitle('🏆 Server Leaderboard')
+                .setTitle('Leaderboard')
                 .setDescription(leaderboard || 'No scores yet!')
                 .setColor('#f28f0c')
                 .setTimestamp();

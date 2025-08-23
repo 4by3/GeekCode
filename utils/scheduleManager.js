@@ -1,44 +1,42 @@
 const schedule = require('node-schedule');
-const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-const { CHANNEL_ID } = require('../config/env');
+const { CHANNEL_ID, VOICE_CHANNEL_ID } = require('../config/env');
 const { deductPoints } = require('../utils/scoreManager');
 
-function setupSchedules(client, dailyMessageRef, clickedUsers) {
-    // Creation of button
-    const rule = new schedule.RecurrenceRule();
-    rule.hour = 6;
-    rule.minute = 0;
-    rule.second = 0;
-    rule.tz = 'Australia/Sydney';
+// Schedule daily message
+const startRule = new schedule.RecurrenceRule();
+startRule.hour = 1;
+startRule.minute = 0;
+startRule.second = 0;
+startRule.tz = 'Australia/Sydney';
 
-    // Removal of button
-    const disableRule = new schedule.RecurrenceRule();
-    disableRule.hour = 7;
-    disableRule.minute = 30;
-    disableRule.second = 0;
-    disableRule.tz = 'Australia/Sydney';
+// Schedule point deduction
+const endRule = new schedule.RecurrenceRule();
+endRule.hour = 3;
+endRule.minute = 30;
+endRule.second = 0;
+endRule.tz = 'Australia/Sydney';
 
-    // Send button schedule
-    schedule.scheduleJob(rule, async () => {
-        // Reset clicked users
-        clickedUsers.clear();
+function setupSchedules(client, dailyMessageRef, lockedInUsers) {
+    // Send daily message schedule
+    schedule.scheduleJob(startRule, async () => {
+        // Reset locked-in users
+        lockedInUsers.clear();
 
-        // Send new daily message
+        // Fetch IDs from env
         const channel = await client.channels.fetch(CHANNEL_ID).catch(error => {
             console.error('Error fetching channel:', error);
             return null;
         });
+        const voice_channel = await client.channels.fetch(VOICE_CHANNEL_ID).catch(error => {
+            console.error('Error fetching channel:', error);
+            return null;
+        });
+
+        // Send new daily message
         if (channel) {
             try {
-                const button = new ButtonBuilder()
-                    .setCustomId('lock_in_button')
-                    .setLabel('Lock In')
-                    .setStyle(ButtonStyle.Primary);
-                const row = new ActionRowBuilder().addComponents(button);
-
                 dailyMessageRef.message = await channel.send({
-                    content: 'Wake up! Click below before 7:30 to lock in',
-                    components: [row],
+                    content: `Join the voice channel <#${voice_channel}> before ${endRule.hour}:${endRule.minute.toString().padStart(2, '0')} to lock in.`,
                 });
             } catch (error) {
                 console.error('Error sending daily message:', error);
@@ -48,24 +46,28 @@ function setupSchedules(client, dailyMessageRef, clickedUsers) {
         }
     });
 
-    // Disable button schedule
-    schedule.scheduleJob(disableRule, async () => {
+    // Deduct points schedule
+    schedule.scheduleJob(endRule, async () => {
         if (dailyMessageRef.message) {
             try {
-                const button = new ButtonBuilder()
-                    .setCustomId('lock_in_button')
-                    .setLabel('Lock In')
-                    .setStyle(ButtonStyle.Primary)
-                    .setDisabled(true);
-                const row = new ActionRowBuilder().addComponents(button);
-                await dailyMessageRef.message.edit({ components: [row] });
-                // deduct points
-                deductPoints(clickedUsers);
+                await dailyMessageRef.message.edit({
+                    content: `Lock-in period has ended.`,
+                });
+                // Deduct points for users who didn't lock in
+                deductPoints(lockedInUsers);
             } catch (error) {
-                console.error('Error disabling button:', error);
+                console.error('Error updating message or deducting points:', error);
             }
         }
     });
 }
 
-module.exports = { setupSchedules };
+// Export the rules for use in other modules
+module.exports = {
+    setupSchedules,
+    getRules: () => ({
+        startTime: { hour: startRule.hour, minute: startRule.minute, second: startRule.second },
+        endTime: { hour: endRule.hour, minute: endRule.minute, second: endRule.second },
+        timezone: startRule.tz
+    })
+};
