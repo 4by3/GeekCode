@@ -52,7 +52,7 @@ async function deductPoints(clickedUsers) {
         for (const user of users) {
             const userId = user.userId;
             if (!clickedUsers.has(userId)) {
-                const newScore = (user.score || 0) - 1;
+                const newScore = min(5, (user.score || 0) - 1);
                 await scoresCollection.updateOne(
                     { userId },
                     { $set: { score: newScore } }

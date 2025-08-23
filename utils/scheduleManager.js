@@ -4,15 +4,15 @@ const { deductPoints } = require('../utils/scoreManager');
 
 // Schedule daily message
 const startRule = new schedule.RecurrenceRule();
-startRule.hour = 13;
-startRule.minute = 30;
+startRule.hour = 6;
+startRule.minute = 0;
 startRule.second = 0;
 startRule.tz = 'Australia/Sydney';
 
 // Schedule point deduction
 const endRule = new schedule.RecurrenceRule();
-endRule.hour = 15;
-endRule.minute = 30;
+endRule.hour = 8;
+endRule.minute = 0;
 endRule.second = 0;
 endRule.tz = 'Australia/Sydney';
 
@@ -62,7 +62,6 @@ function setupSchedules(client, dailyMessageRef, lockedInUsers) {
     });
 }
 
-// Export the rules for use in other modules
 module.exports = {
     setupSchedules,
     getRules: () => ({
