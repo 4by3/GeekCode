@@ -26,7 +26,7 @@ async function addPoint(userId) {
         // Find the user's current score
         const user = await scoresCollection.findOne({ userId });
         const currentScore = user ? user.score : 0;
-        const newScore = Math.max(1, Math.min(5, currentScore + 1));
+        const newScore = Math.max(1, currentScore + 1);
 
         // Update or insert the user's score
         await scoresCollection.updateOne(
