@@ -8,10 +8,10 @@ module.exports = {
 	async execute(interaction) {
 		try {
             description = 
-            `Bot made for LeetCode. Unfinished, main feature at the moment is for the 6am session.\n
+            `Bot made for LeetCode, unfinished. Main feature at the moment is for the 6am session.\n
             Join <#${VOICE_CHANNEL_ID}> between 6am-7:30am to be part of the leaderboard system.\n
-            If it doesn't work, may be due to web service being down. It's using Render's free web service which resets randomly.\n
-            You will be able to see me in <#${CHANNEL_ID}>, hope to see you there :)`
+            If it doesn't work, may be due to the server. It's using Render's free web service which resets randomly.\n
+            You will be able to find me in <#${CHANNEL_ID}>, hope to see you there :)`
 			const embed = new EmbedBuilder()
                 .setTitle('Info')
                 .setDescription(description)
