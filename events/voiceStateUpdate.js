@@ -19,8 +19,8 @@ module.exports = {
             const startTimeInSeconds = startTime.hour * 3600 + startTime.minute * 60 + startTime.second;
             const endTimeInSeconds = endTime.hour * 3600 + endTime.minute * 60 + endTime.second;
 
-            // Check if current time is within the lock-in window
-            if (currentTimeInSeconds >= startTimeInSeconds && currentTimeInSeconds <= endTimeInSeconds) {
+            // Check if current time is within the lock-in window and user not locked in yet
+            if (currentTimeInSeconds >= startTimeInSeconds && currentTimeInSeconds <= endTimeInSeconds && !lockedInUsers.has(userId)) {
                 try {
                     lockedInUsers.add(userId);
                     addPoint(userId);
