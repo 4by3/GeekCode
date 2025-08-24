@@ -11,8 +11,8 @@ startRule.tz = 'Australia/Sydney';
 
 // Schedule point deduction
 const endRule = new schedule.RecurrenceRule();
-endRule.hour = 8;
-endRule.minute = 0;
+endRule.hour = 7;
+endRule.minute = 30;
 endRule.second = 0;
 endRule.tz = 'Australia/Sydney';
 
