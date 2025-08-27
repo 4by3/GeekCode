@@ -14,8 +14,11 @@ module.exports = {
 
             const leaderboard = sortedScores.map(([userId, score], index) => {
                 let rank;
+                // if (score > 5) {
+                //     rank = `Locked In: Streak ${score - 5}`
+                // Temporarily disabling streak system
                 if (score > 5) {
-                    rank = `Locked In: Streak ${score - 5}`
+                    rank = `Locked In`
                 } else if (score == 5) {
                     rank = 'Locked In';
                 } else if (score >= 3) {

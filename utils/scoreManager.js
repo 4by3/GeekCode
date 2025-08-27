@@ -49,17 +49,20 @@ async function deductPoints(clickedUsers) {
         // Get all users in the collection
         const users = await scoresCollection.find({}).toArray();
 
-        for (const user of users) {
-            const userId = user.userId;
-            if (!clickedUsers.has(userId)) {
-                const newScore = min(5, (user.score || 0) - 1);
-                await scoresCollection.updateOne(
-                    { userId },
-                    { $set: { score: newScore } }
-                );
-                console.log(`Point deducted from user ${userId}. New score: ${newScore}`);
-            }
-        }
+        // // Temporarily disabling deduct point
+        // for (const user of users) {
+        //     const userId = user.userId;
+        //     if (!clickedUsers.has(userId)) {
+        //         const newScore = Math.min(5, (user.score || 0) - 1);
+        //         await scoresCollection.updateOne(
+        //             { userId },
+        //             { $set: { score: newScore } }
+        //         );
+        //         console.log(`Point deducted from user ${userId}. New score: ${newScore}`);
+        //     }
+        // }
+
+
     } catch (error) {
         console.error('Error deducting points:', error.message);
         throw error;
