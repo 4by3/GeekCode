@@ -1,35 +1,25 @@
-const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
 const { MONGODB_URI } = require('../config/env');
-const client = new MongoClient(MONGODB_URI);
+const Score = require('../models/Score')
 
-let db, scoresCollection;
-
-// Initialize MongoDB connection
-async function initializeMongoDB() {
-    try {
-        await client.connect();
-        db = client.db('discord_bot');
-        scoresCollection = db.collection('scores');
-        console.log('Connected to MongoDB');
-    } catch (error) {
+// Use mongoose to connect to mongodb
+mongoose.connect(MONGODB_URI)
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(error => {
         console.error('Error connecting to MongoDB:', error.message);
         process.exit(1);
-    }
-}
-
-initializeMongoDB();
-
+    });
 
 // Add point for a user
 async function addPoint(userId) {
     try {
         // Find the user's current score
-        const user = await scoresCollection.findOne({ userId });
+        const user = await Score.findOne({ userId });
         const currentScore = user ? user.score : 0;
         const newScore = Math.max(1, currentScore + 1);
 
         // Update or insert the user's score
-        await scoresCollection.updateOne(
+        await Score.updateOne(
             { userId },
             { $set: { score: newScore } },
             { upsert: true }
@@ -47,14 +37,14 @@ async function addPoint(userId) {
 async function deductPoints(clickedUsers) {
     try {
         // Get all users in the collection
-        const users = await scoresCollection.find({}).toArray();
+        const users = await Score.find({}).toArray();
 
         // // Temporarily disabling deduct point
         // for (const user of users) {
         //     const userId = user.userId;
         //     if (!clickedUsers.has(userId)) {
         //         const newScore = Math.min(5, (user.score || 0) - 1);
-        //         await scoresCollection.updateOne(
+        //         await Score.updateOne(
         //             { userId },
         //             { $set: { score: newScore } }
         //         );
@@ -73,7 +63,7 @@ async function deductPoints(clickedUsers) {
 // Get function
 async function getScores() {
     try {
-        const users = await scoresCollection.find({}).toArray();
+        const users = await Score.find({});
         const scores = {};
         users.forEach(user => {
             scores[user.userId] = user.score;
