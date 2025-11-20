@@ -4,14 +4,14 @@ const { deductPoints } = require('../utils/scoreManager');
 
 // Schedule daily message
 const startRule = new schedule.RecurrenceRule();
-startRule.hour = 6;
+startRule.hour = 8;
 startRule.minute = 0;
 startRule.second = 0;
 startRule.tz = 'Australia/Sydney';
 
 // Schedule point deduction
 const endRule = new schedule.RecurrenceRule();
-endRule.hour = 7;
+endRule.hour = 9;
 endRule.minute = 30;
 endRule.second = 0;
 endRule.tz = 'Australia/Sydney';
